@@ -1,0 +1,38 @@
+a) uniqueConstraints: This combination of column values must be unique. Duplicate values are not allowed.
+         @Table(
+          name = "student",
+          uniqueConstraints = {
+              @UniqueConstraint(columnNames = "email")
+          }
+          )
+
+b) @Builder annotation: @Builder is a Lombok annotation that helps you create objects in a clean and readable way, especially when a class has many fields.
+Without @Builder
+Suppose you have:
+public class Student {
+
+    private int id;
+    private String name;
+    private int age;
+    private String email;
+}
+You might have to use a constructor:
+Student s = new Student(101, "Asha", 22, "asha@gmail.com");
+The problem is that when there are many parameters, it becomes difficult to understand what each value represents.
+
+With @Builder
+@Builder
+public class Student {
+    private int id;
+    private String name;
+    private int age;
+    private String email;
+}
+Now you can create the object like this:
+Student s = Student.builder()
+        .id(101)
+        .name("Asha")
+        .age(22)
+        .email("asha@gmail.com")
+        .build();
+This is called the Builder Pattern.
