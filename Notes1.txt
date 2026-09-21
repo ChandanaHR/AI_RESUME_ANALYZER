@@ -36,3 +36,5 @@ Student s = Student.builder()
         .email("asha@gmail.com")
         .build();
 This is called the Builder Pattern.
+
+c) 
