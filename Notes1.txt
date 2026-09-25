@@ -44,3 +44,50 @@ Spring Security authenticates the user.
 A JWT token is generated.
 AuthResponseDto is returned to the frontend.
 The frontend stores the token and uses it for protected APIs like Resume Upload, AI Analysis, Dashboard, etc.
+
+d) Mapper class: Mapper class is used to convert data from one object to another, most commonly between Entity ↔ DTO (Data Transfer Object). It helps keep your application secure, clean, and maintainable by separating the database model from the API model.
+Without a mapper, you would return your User entity directly from the API, which might expose sensitive fields like password.
+Instead:
+Entity → Represents the database table.
+DTO → Represents the data sent to the frontend.
+Mapper → Converts between them.
+Example
+User Entity
+@Entity
+public class User {
+
+    private Long id;
+    private String name;
+    private String email;
+    private String password;
+}
+UserDto
+public class UserDto {
+
+    private Long id;
+    private String name;
+    private String email;
+}
+
+Notice that password is not included.
+
+UserMapper
+@Component
+public class UserMapper {
+
+    public UserDto toDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        return dto;
+    }
+
+    public User toEntity(UserDto dto) {
+        User user = new User();
+        user.setId(dto.getId());
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        return user;
+    }
+}
