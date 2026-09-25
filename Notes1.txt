@@ -37,4 +37,10 @@ Student s = Student.builder()
         .build();
 This is called the Builder Pattern.
 
-c) 
+c) Authresponsedto: AuthResponseDto is typically used to send authentication details back to the frontend after a successful login or registration. Instead of returning the entire User entity (which may contain sensitive data like passwords), the API returns only the required information.
+User enters email and password.
+AuthController receives the login request.
+Spring Security authenticates the user.
+A JWT token is generated.
+AuthResponseDto is returned to the frontend.
+The frontend stores the token and uses it for protected APIs like Resume Upload, AI Analysis, Dashboard, etc.
