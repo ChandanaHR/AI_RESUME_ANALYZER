@@ -92,4 +92,45 @@ public class UserMapper {
     }
 }
 
-e)
+e)@Transactional 
+Execute this method as one database transaction. Either all database operations succeed, or if something goes wrong, the transaction can be rolled back.
+Imagine transferring ₹1,000 from Account A → Account B.
+There are two database operations:
+Deduct ₹1,000 from Account A
+Add ₹1,000 to Account B
+@Transactional
+public void transferMoney(Long fromId, Long toId, double amount) {
+
+    Account from = accountRepository.findById(fromId).orElseThrow();
+    Account to = accountRepository.findById(toId).orElseThrow();
+
+    from.setBalance(from.getBalance() - amount);
+    accountRepository.save(from);
+
+    // Suppose an exception happens here
+
+    to.setBalance(to.getBalance() + amount);
+    accountRepository.save(to);
+}
+If an exception occurs after deducting money from Account A, Spring can roll back the transaction, so Account A's deduction is undone.
+Without @Transactional
+
+You could end up with:
+
+Account A: -₹1000  ✅
+Account B: +₹1000  ❌
+
+This creates inconsistent data.
+With @Transactional
+START TRANSACTION
+       ↓
+Deduct from A
+       ↓
+Add to B
+       ↓
+Everything successful?
+   ↙           ↘
+ YES           NO
+ ↓              ↓
+COMMIT        ROLLBACK
+@Transactional = Atomicity of a group of database operations.
