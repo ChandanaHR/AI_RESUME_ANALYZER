@@ -134,3 +134,24 @@ Everything successful?
  ↓              ↓
 COMMIT        ROLLBACK
 @Transactional = Atomicity of a group of database operations.
+
+f) builder pattern
+Instead of:
+User user = new User();
+user.setEmail(...);
+user.setPasswordHash(...);
+user.setRole(...);
+We use User.builder()
+.email(request.getEmail())
+Suppose the request contains:
+
+{
+    "email": "abc@gmail.com",
+    "password": "hello123",
+    "role": "USER"
+}
+Then:
+request.getEmail()
+returns:
+"abc@gmail.com"
+
