@@ -155,3 +155,25 @@ request.getEmail()
 returns:
 "abc@gmail.com"
 
+g) Authentication auth:
+Spring Security automatically provides the Authentication object for the currently logged-in user.
+Login
+  ↓
+Spring Security authenticates user
+  ↓
+Authentication object is created
+  ↓
+Authentication object contains information about logged-in user
+What is inside auth?
+
+The Authentication object contains information about the authenticated user.
+
+For example, conceptually:
+
+Authentication
+│
+├── Principal
+├── Name
+├── Authorities
+├── Credentials
+└── Authenticated status
