@@ -1,0 +1,8 @@
+1a) SecretKey  - a Java type representing a cryptographic key used for signing and verifying JWT tokens.
+                 Think of a secret key as a special digital seal used to sign a JWT token. The server uses this key to create a signature,
+                 and later uses the same key to verify that signature.
+expirationMs - This variable stores how long the JWT token remains valid.
+                the token's expiration duration, measured in milliseconds.
+1b) @Value - @Value tells Spring to read a value from the application's configuration, such as application.properties.
+    The ${...} syntax means look up the property with this name.
+1c) Keys.hmacShaKeyFor(secret.getBytes()) : This line creates a cryptographic key from the configured secret.
