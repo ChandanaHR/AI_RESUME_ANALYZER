@@ -6,3 +6,51 @@ expirationMs - This variable stores how long the JWT token remains valid.
 1b) @Value - @Value tells Spring to read a value from the application's configuration, such as application.properties.
     The ${...} syntax means look up the property with this name.
 1c) Keys.hmacShaKeyFor(secret.getBytes()) : This line creates a cryptographic key from the configured secret.
+                    secret.getBytes(): converts the secret string into byte array
+                    Keys.hmacShaKeyFor(...): This is a method from the JJWT library. It creates a SecretKey suitable for HMAC-based JWT signing algorithms.
+                                            The secret must be sufficiently long for the algorithm you use. For example, HS256 requires at least 256 bits (32 bytes) of key material.
+
+======================What is the purpose of generating token in Jwtutil and for what token will be generated?=====================================
+The purpose of generating a token in JwtUtil is to allow a user to access protected APIs after successfully logging in, 
+without entering their username and password for every request.
+---------------For whom is the token generated?
+A JWT token is generated for a user who successfully logs in.
+Step 1: User registers
+Username: chandu, Password: ********
+Step 2: User logs in
+Spring Boot checks the username and password against the stored user credentials.
+Step 3: JWT token is generated
+If the credentials are valid, the backend creates a token for that user.
+Step 4: User accesses protected APIs
+The client sends the token with each protected request. The backend validates it before allowing access.
+API	Purpose
+POST /register	Create an account
+POST /login	Verify credentials and obtain a token
+GET /me	Get the logged-in user's profile
+Imagine the user logs in successfully.
+The backend generates a JWT such as:
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaGFuZHUifQ.signature
+The backend sends it to the frontend. The frontend can then send it when requesting the user's profile:
+GET /me
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+The backend validates the token and identifies the user associated with it.
+
+public String generateToken(String email, String role) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + expirationMs);
+        return Jwts.builder()
+                .subject(email)
+                .claim("role", role)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(key)
+                .compact();
+    }
+The above method is token creation for the user who successfully logs in 
+Imagine a user logs in with:
+- Email: chandu@gmail.com
+- Role: USER
+- Token validity: 1 hour
+Your application calls this method to create a token for that user.
+Date: why do we need it? The JWT should record when it was created. We also use this time to calculate when it expires.
+Expiration time: current time: 11:00 am + validation duration: 1hour = > Expiration time: 12:00 pm after 12 my token will expire
