@@ -54,3 +54,49 @@ Imagine a user logs in with:
 Your application calls this method to create a token for that user.
 Date: why do we need it? The JWT should record when it was created. We also use this time to calculate when it expires.
 Expiration time: current time: 11:00 am + validation duration: 1hour = > Expiration time: 12:00 pm after 12 my token will expire
+          .subject = The subject is a standard JWT claim that identifies the principal the token represents.
+          Later, your backend can extract this subject to determine which user the token represents.
+          .signWith(key) = This signs the JWT using the secret key you created in your JwtUtil constructor.
+                            The signature helps the backend detect whether the token has been altered.
+                            For example, if someone changes the token's role from USER to ADMIN, the original signature will no longer match the modified token.
+                                                  User successfully logs in
+                                                  Email and password are authenticated
+                                                  
+                                                  generateToken(email, role)
+                                                  Receives the user's email and role
+                                                  
+                                                  Build JWT claims
+                                                  Subject + role + issue time + expiration
+                                                  
+                                                  Sign with the secret key
+                                                  Protects token integrity
+                                                  
+                                                  Return the JWT String
+                                                  The login service can send it to the frontend
+Example: Imagine you log in to your Resume Analyzer application at 10:00 AM, and the JWT expires after one hour.
+          10:00 AM — Login successful
+          Your username and password are verified, and the backend generates a JWT.
+          10:30 AM — Using the application
+          Your requests include the JWT. The backend validates it and allows access if you have the necessary permissions.
+          11:00 AM — Token expires
+          The backend rejects the expired token when it is used for a protected request.
+          What happens next?
+                  - Without a refresh-token mechanism: the user generally needs to log in again.
+                  - With a valid refresh token: the application may obtain a new access token without asking the user to enter their password again.
+1d) public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+Imagine the frontend sends a token to your backend. Your backend receives that token and wants to know which user it belongs to.
+JWT token
+Contains subject: chandu@gmail.com
+extractEmail(token)
+Calls extractClaim(token, Claims::getSubject)
+getSubject()
+Retrieves the subject claim
+Returned value
+chandu@gmail.com
+1e) private boolean isExpired(String token) {
+        return extractClaim(token, Claims::getExpiration).before(new Date());
+    }
+checks whether a JWT token has expired or not
+Extract the token's expiration time and compare it with the current time. If the expiration time is earlier than the current time, return true.means token has expired
