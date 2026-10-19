@@ -100,3 +100,46 @@ chandu@gmail.com
     }
 checks whether a JWT token has expired or not
 Extract the token's expiration time and compare it with the current time. If the expiration time is earlier than the current time, return true.means token has expired
+
+1f)   private <T> T extractClaim(String token, Function<Claims, T> resolver) {
+        Claims claims = Jwts.parser().verifyWith(key).build()
+                .parseSignedClaims(token).getPayload();
+        return resolver.apply(claims);
+    }
+Suppose a user logs into your application. Your backend generates a JWT token containing information like this:
+Example JWT payload
+{
+  "sub": "user@gmail.com",
+  "role": "USER",
+  "iat": 1792400000,
+  "exp": 1792403600
+}
+Sometimes your application needs the email; sometimes it needs the role or expiration time.
+Instead of writing separate token-parsing logic for every claim, you write extractClaim() once and reuse it.
+Function<Claims, T> resolver	A function that receives all claims and returns the specific value we want.
+
+JWT token has 3 parts separated by dots
+Header                Payload             Signature
+Header: Contains information such as the signing algorithm.
+Payload: Contains claims, such as username, role and expiration time.
+Signature: Allows the backend to verify that the token was signed using the expected key and has not been tampered with.
+key: A key is a cryptographic value used to create or verify a JWT signature.
+      Think of it like a special secret used to produce a digital seal on your token.
+      key is the cryptographic key your application uses to verify the JWT signature.
+signature: A signature is a cryptographic value calculated from the JWT's header and payload using the signing algorithm and key.
+            When generating the token, the JWT library calculates a signature based on the encoded header, encoded payload, algorithm and key.
+            The signature is not the same as the key. The key is used to calculate or verify the signature; the signature is included in the token.
+
+How does verifyWith(key) works?
+Step1: User logs in: The backend verifies the email and password, then generates a JWT and its signature.
+Step2: User sends the token: The frontend sends the JWT with a request to access a protected endpoint
+Step3: Backend verifies the signature
+Step4: Backend decides whether to trust the claims: If verification succeeds and the token is otherwise valid, the application can use the claims. If the signature is invalid, parsing fails.
+
+Key: A key is a secret cryptographic value that the backend uses to generate and verify the signature.
+      Imagine you are a teacher who wants to put a special seal on a certificate.
+- Payload = Certificate details (student name, marks).
+- Key = Your secret seal-making tool.
+- Signature = The special seal created using that tool.
+Anyone can read the certificate, but without the secret tool, they cannot create a valid seal for modified details.
+
