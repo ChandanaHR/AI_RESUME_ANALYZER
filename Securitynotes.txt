@@ -143,3 +143,29 @@ Key: A key is a secret cryptographic value that the backend uses to generate and
 - Signature = The special seal created using that tool.
 Anyone can read the certificate, but without the secret tool, they cannot create a valid seal for modified details.
 
+................................JwtAuthFilter.java..........................................................
+1g) OncePerRequestFilter
+Scenario 1: One visitor enters the company
+1. A visitor comes to the gate.
+2. You check their ID card.
+3. You allow them inside.
+You have checked that visitor once for that entry.
+Scenario 2: The same visitor goes to another room
+The visitor goes to the accounts department. They don't need to enter through the main gate again just to move between rooms.
+But suppose the visitor leaves the company and comes back later. That's a new entry, so you check their ID again.
+OncePerRequestFilter helps prevent the filter from checking the same request repeatedly during its processing. A new request gets checked again.
+Situation	Does the filter run?
+User requests /orders	Yes
+User requests /orders again	Yes, because it's a new request
+The same request is processed again during a dispatch	It helps avoid running the filter logic again
+Company example	Application example
+Visitor enters the company	             User sends an HTTP request
+Security guard checks the ID	           JWT filter checks the token
+Visitor enters the accounts department	 Request reaches OrderController
+Visitor moves to another department inside the company	        The request continues to the next processing step
+
+1h) @NonNull annotation
+@NonNull is an annotation used to indicate that a variable, parameter, or return value should not be null.
+With @NonNull : The generated null check detects null at the beginning of the method.
+It throws a NullPointerException before executing name.toUpperCase().
+Without @NonNull: It takes null value then it enters inside the method and then it throws a NullPointerException
