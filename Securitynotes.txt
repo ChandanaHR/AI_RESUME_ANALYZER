@@ -169,3 +169,45 @@ Visitor moves to another department inside the company	        The request conti
 With @NonNull : The generated null check detects null at the beginning of the method.
 It throws a NullPointerException before executing name.toUpperCase().
 Without @NonNull: It takes null value then it enters inside the method and then it throws a NullPointerException
+
+doFilterInternal: when React sends a request to your Spring Boot backend, this filter can check whether the request contains a JWT token.
+FilterChain filterChain: Allows the request to continue to the next filter in the security chain, or eventually to the controller if all necessary checks pass.
+String header = request.getHeader("Authorization"); : Extracts the header value from client request. The Authorization header is where a client commonly sends its JWT.
+
+Note: -------------------My question is when token will be generated and agin y we want to extract a token in Jwtauthfilter--------------------------------
+Step 1: User logs in through React
+Email: user@gmail.com
+Password: myPassword123
+Step 2: Spring Boot verifies credentials
+It checks the email and compares the submitted password against the stored password hash.
+Step 3: Backend generates a JWT
+After successful authentication, the backend creates a signed token containing claims such as the user's email and expiry time.
+Step 4: Backend sends the token to React
+React receives the token and keeps it available for subsequent authenticated requests.
+Because the backend needs to receive the token with each protected request to identify and authenticate the user.
+Imagine you log in successfully to an e-commerce application.
+You receive a JWT once, but then you perform multiple operations.
+Action	What happens?
+Login	Backend generates a JWT
+View your profile	React sends the JWT
+View your orders	React sends the JWT again
+Add a product to your cart	React sends the JWT again
+View your profile tomorrow	React sends a valid JWT again, if it hasn't expired
+
+ if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+            if (jwtUtil.isTokenValid(token, userDetails.getUsername())) {
+                var authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+
+        filterChain.doFilter(request, response);
+Yes! You've already extracted the email from the JWT. Now this code checks whether the user is already authenticated, loads the user's details from the database, validates the JWT, and establishes authentication in Spring Security.
+SecurityContextHolder	Provides access to the current security context.
+getContext()	Gets the current SecurityContext.
+getAuthentication()	Gets the Authentication object stored in that context.
+== null	Checks whether that object is absent.
