@@ -211,3 +211,21 @@ SecurityContextHolder	Provides access to the current security context.
 getContext()	Gets the current SecurityContext.
 getAuthentication()	Gets the Authentication object stored in that context.
 == null	Checks whether that object is absent.
+    React frontend
+Sends request with JWT token
+
+   JwtAuthFilter
+Extracts email and validates token
+
+  SecurityContextHolder
+Stores authenticated user's information
+
+  Spring Security authorization
+Checks permissions and allows or denies access
+authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); = This attaches additional details about the HTTP request to the authentication object.
+For example, these details may include:
+- The remote IP address.
+- The HTTP session ID, if one is available.
+The request is the current HttpServletRequest.
+
+-----------------------------------CustomUserDetailsService----------------------------------------------
