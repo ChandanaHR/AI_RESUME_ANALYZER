@@ -228,4 +228,54 @@ For example, these details may include:
 - The HTTP session ID, if one is available.
 The request is the current HttpServletRequest.
 
------------------------------------CustomUserDetailsService----------------------------------------------
+-----------------------------------Exception----------------------------------------------
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> fieldErrors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(err -> fieldErrors.put(err.getField(), err.getDefaultMessage()));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("errors", fieldErrors);
+        return ResponseEntity.badRequest().body(body);
+    }
+Request Body
+{
+  "name": "",
+  "email": "abc",
+  "age": 15
+}
+Your DTO is
+public class UserRequest {
+    @NotBlank(message = "Name is required")
+    private String name;
+    @Email(message = "Invalid email")
+    private String email;
+    @Min(value = 18, message = "Age must be at least 18")
+    private int age;
+}
+Controller
+@PostMapping("/register")
+public String register(@Valid @RequestBody UserRequest request) {
+    return "Success";
+}
+JSON → converted into UserRequest.
+@Valid starts validation.
+Validation fails.
+Spring throws MethodArgumentNotValidException.
+Instead of showing a default error page, this method executes.
+ex: contains all validation errors
+Why map means key will be the field name and value will be the error message example : name => name is required
+Bindingresult holds all the validation errors
+Finally the response will be sent in JSON format by adding all validation errors in body map
+Example : {
+ "timestamp":"2026-10-27T11:30:15",
+ "status":400,
+ "errors":{
+    "name":"Name is required",
+    "email":"Invalid email",
+    "age":"Age must be at least 18"
+ }
+}
