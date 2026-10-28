@@ -1,0 +1,17 @@
+CorsConfig.java
+CORS (Cross-Origin Resource Sharing) in a Spring Boot application. It allows your frontend application, such as React, 
+to communicate with your backend APIs when they run on different origins.
+CORS configuration tells the browser which frontend origins are allowed to access your backend resources.
+Note: CORS is enforced by browsers. It is not a replacement for authentication or authorization, and it does not prevent non-browser clients such as Postman from sending requests.
+a) @Value("${app.cors.allowed-origins}")
+    private String allowedOrigins;
+@Value is a Spring annotation used to inject a value from application configuration into a Java field.
+Here, Spring reads the value of the property named app.cors.allowed-origins. It injects a value from application.properties file
+b) WebMvcConfigurer: Spring needs to know that this CORS configuration exists so that it can apply the rules to incoming web requests.
+                      return new WebMvcConfigurer() {: WebMvcConfigurer is a Spring MVC interface that lets you customize MVC behavior.
+                      You customize the CORS rules without implementing the entire MVC framework yourself.
+c) The CorsRegistry registry parameter lets you register CORS rules for URL paths.
+    In simple terms, you are telling Spring: "Here are the rules for which origins, methods, and headers are allowed to access my APIs."
+    registry.addMapping("/api/**"): This specifies which backend URL paths should use these CORS rules.
+    /api/auth/login	Yes
+    /api/auth/register	Yes                  Cors rules applied
