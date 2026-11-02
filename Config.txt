@@ -15,3 +15,24 @@ c) The CorsRegistry registry parameter lets you register CORS rules for URL path
     registry.addMapping("/api/**"): This specifies which backend URL paths should use these CORS rules.
     /api/auth/login	Yes
     /api/auth/register	Yes                  Cors rules applied
+
+
+SecurityConfig
+Your SecurityFilterChain defines:
+- Which APIs are publicly accessible.
+- Which APIs require authentication.
+- Which APIs require specific roles.
+- How Spring Security manages sessions.
+- Where your JWT filter executes in the security filter chain.
+API	Purpose	Access
+/api/auth/register	Register user	Public
+/api/auth/login	Login user	Public
+/api/recruiter/dashboard	Recruiter dashboard	RECRUITER
+/api/admin/users	Manage users	ADMIN
+/api/candidate/profile	Candidate profile	Authenticated user
+Your security configuration decides who can access these APIs.
+
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+   Here, Spring creates a SecurityFilterChain object and uses it to apply security rules to incoming HTTP requests.
+    HttpSecurity is an object that allows us to configure web security.
